@@ -6,7 +6,7 @@ pkgname=runc
 pkgver=1.1.9
 pkgrel=1
 pkgdesc='CLI tool for managing OCI compliant containers'
-arch=(x86_64)
+arch=(x86_64 aarch64)
 url='https://runc.io/'
 license=(Apache)
 provides=('oci-runtime')
@@ -24,6 +24,9 @@ sha256sums=('7695febe134e17559b26224821a2a123bc9e9a637ad4a8c47e99ae0a1ec71dc2'
 
 prepare() {
   mkdir -p src/github.com/opencontainers
+  cd runc-${pkgver}
+  sed -i '1s|.*|#!/data/usr/bin/bash|' man/md2man-all.sh
+  cd ..
   cp -r runc-${pkgver} src/github.com/opencontainers/runc
 }
 
@@ -42,10 +45,10 @@ build() {
 package() {
   cd src/github.com/opencontainers/runc
 
-  install -Dm755 runc "$pkgdir/usr/bin/runc"
+  install -Dm755 runc "$pkgdir/data/usr/bin/runc"
   install -Dm644 contrib/completions/bash/runc \
-    "$pkgdir/usr/share/bash-completion/completions/runc"
+    "$pkgdir/data/usr/share/bash-completion/completions/runc"
 
-  install -d "$pkgdir/usr/share/man/man8"
-  install -m644 man/man8/*.8 "$pkgdir/usr/share/man/man8"
+  install -d "$pkgdir/data/usr/share/man/man8"
+  install -m644 man/man8/*.8 "$pkgdir/data/usr/share/man/man8"
 }
